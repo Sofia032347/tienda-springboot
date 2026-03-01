@@ -30,6 +30,15 @@ public class UsuarioController {
 
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Usuario usuario) {
+
+        if (usuario.getId() != null) {
+            Usuario usuarioExistente = repository.findById(usuario.getId()).orElse(null);
+
+            if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+                usuario.setPassword(usuarioExistente.getPassword());
+            }
+        }
+
         repository.save(usuario);
         return "redirect:/usuarios";
     }
