@@ -1,4 +1,4 @@
-/*package com.tienda.tienda.controller;
+package com.tienda.tienda.controller;
 
 import com.tienda.tienda.entity.Usuario;
 import com.tienda.tienda.repository.UsuarioRepository;
@@ -18,7 +18,7 @@ public class UsuarioController {
 
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("listaUsuarios", repository.findAll());
+        model.addAttribute("usuarios", repository.findAll());
         return "usuarios";
     }
 
@@ -29,8 +29,21 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardar")
-    public String guardar(Usuario usuario) {
+    public String guardar(@ModelAttribute Usuario usuario) {
         repository.save(usuario);
         return "redirect:/usuarios";
     }
-}*/
+
+    @GetMapping("/editar/{id}")
+    public String editar(@PathVariable Long id, Model model) {
+        Usuario usuario = repository.findById(id).orElse(null);
+        model.addAttribute("usuario", usuario);
+        return "formUsuario";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable Long id) {
+        repository.deleteById(id);
+        return "redirect:/usuarios";
+    }
+}
