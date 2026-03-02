@@ -1,6 +1,6 @@
 package com.tienda.tienda;
 
-import com.tienda.tienda.entity.Usuario;
+import com.tienda.tienda.model.Usuario;
 import com.tienda.tienda.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

@@ -1,6 +1,6 @@
 package com.tienda.tienda.controller;
 
-import com.tienda.tienda.entity.Usuario;
+import com.tienda.tienda.model.Usuario;
 import com.tienda.tienda.repository.UsuarioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
