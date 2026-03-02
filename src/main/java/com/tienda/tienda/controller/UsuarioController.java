@@ -2,57 +2,71 @@ package com.tienda.tienda.controller;
 
 import com.tienda.tienda.model.Usuario;
 import com.tienda.tienda.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final UsuarioRepository repository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    public UsuarioController(UsuarioRepository repository) {
-        this.repository = repository;
+    // Redirección inicial del sistema
+    @GetMapping("/")
+    public String inicio() {
+        return "redirect:/login";
     }
 
-    @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("usuarios", repository.findAll());
+    // Listar usuarios
+    @GetMapping("/usuarios")
+    public String listarUsuarios(@RequestParam(required = false) String buscar, Model model) {
+
+        List<Usuario> listaUsuarios;
+
+        if (buscar != null && !buscar.isEmpty()) {
+            listaUsuarios = usuarioRepository
+                    .findByNombreCompletoContainingIgnoreCaseOrUsernameContainingIgnoreCaseOrCedulaContainingIgnoreCase(
+                            buscar, buscar, buscar);
+        } else {
+            listaUsuarios = usuarioRepository.findAll();
+        }
+
+        model.addAttribute("listaUsuarios", listaUsuarios);
+        model.addAttribute("buscar", buscar);
+
         return "usuarios";
     }
 
-    @GetMapping("/nuevo")
-    public String nuevo(Model model) {
+    // Mostrar formulario nuevo
+    @GetMapping("/usuarios/nuevo")
+    public String mostrarFormularioNuevo(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "formUsuario";
     }
 
-    @PostMapping("/guardar")
-    public String guardar(@ModelAttribute Usuario usuario) {
-
-        if (usuario.getId() != null) {
-            Usuario usuarioExistente = repository.findById(usuario.getId()).orElse(null);
-
-            if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
-                usuario.setPassword(usuarioExistente.getPassword());
-            }
-        }
-
-        repository.save(usuario);
+    // Guardar usuario
+    @PostMapping("/usuarios/guardar")
+    public String guardarUsuario(@ModelAttribute Usuario usuario) {
+        usuarioRepository.save(usuario);
         return "redirect:/usuarios";
     }
 
-    @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        Usuario usuario = repository.findById(id).orElse(null);
+    // Editar usuario
+    @GetMapping("/usuarios/editar/{id}")
+    public String editarUsuario(@PathVariable Long id, Model model) {
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
         model.addAttribute("usuario", usuario);
         return "formUsuario";
     }
 
-    @GetMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Long id) {
-        repository.deleteById(id);
+    // Eliminar usuario
+    @GetMapping("/usuarios/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable Long id) {
+        usuarioRepository.deleteById(id);
         return "redirect:/usuarios";
     }
 }
