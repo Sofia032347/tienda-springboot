@@ -13,6 +13,10 @@
     </div>
 </nav>
 
+<div th:if="${error}" class="alert alert-danger">
+    <span th:text="${error}"></span>
+</div>
+
 <div class="container mt-4">
 
     <a href="/usuarios" class="btn btn-secondary mb-3">
@@ -22,33 +26,45 @@
     <div class="card shadow p-4 col-md-6 mx-auto">
         <h4 class="mb-4 text-center">Formulario de Usuario</h4>
 
-        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post">
+        <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post" novalidate>
 
             <input type="hidden" th:field="*{id}"/>
 
             <div class="mb-3">
                 <label class="form-label">Cédula</label>
-                <input type="text" th:field="*{cedula}" class="form-control" required>
+                <input type="text" th:field="*{cedula}" class="form-control">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Nombre Completo</label>
-                <input type="text" th:field="*{nombreCompleto}" class="form-control" required>
+                <input type="text" th:field="*{nombreCompleto}" class="form-control">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Correo Electrónico</label>
-                <input type="email" th:field="*{correo}" class="form-control" required>
+                <input type="email" th:field="*{correo}" class="form-control">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Nombre de Usuario</label>
-                <input type="text" th:field="*{username}" class="form-control" required>
+                <input type="text" th:field="*{username}" class="form-control">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Contraseña</label>
-                <input type="password" th:field="*{password}" class="form-control">
+
+                <div class="input-group">
+                    <input type="password"
+                           th:field="*{password}"
+                           id="passwordField"
+                           class="form-control">
+
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="togglePassword()">
+                        👁
+                    </button>
+                </div>
             </div>
 
             <div class="d-grid">
@@ -61,6 +77,16 @@
     </div>
 
 </div>
+<script>
+    function togglePassword() {
+        const field = document.getElementById("passwordField");
 
+        if (field.type === "password") {
+            field.type = "text";
+        } else {
+            field.type = "password";
+        }
+    }
+</script>
 </body>
 </html>

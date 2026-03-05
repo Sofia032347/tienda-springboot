@@ -8,4 +8,6 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
 
     List<Proveedor> findByNombreProveedorContainingIgnoreCaseOrNitContainingIgnoreCaseOrCiudadContainingIgnoreCase(
             String nombre, String nit, String ciudad);
+
+    boolean existsByNit(String s);
 }

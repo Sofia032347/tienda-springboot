@@ -30,7 +30,16 @@
         </div>
     </div>
 </nav>
+
 <div class="container mt-4">
+
+    <div th:if="${mensaje}" class="alert alert-success">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
 
     <div class="card shadow">
 
@@ -54,6 +63,12 @@
                 <a href="/proveedores/nuevo" class="btn btn-success">
                     + Nuevo Proveedor
                 </a>
+
+                <span class="text-muted">
+                    Total registros:
+                    <strong th:text="${#lists.size(listaProveedores)}"></strong>
+                </span>
+
             </div>
 
             <div class="table-responsive">

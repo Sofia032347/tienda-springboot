@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class ProveedorController {
             listaProveedores = proveedorRepository
                     .findByNombreProveedorContainingIgnoreCaseOrNitContainingIgnoreCaseOrCiudadContainingIgnoreCase(
                             buscar, buscar, buscar);
+            if(listaProveedores.isEmpty()){
+                model.addAttribute("error","Proveedor Inexistente");
+            }
         } else {
             listaProveedores = proveedorRepository.findAll();
         }
@@ -45,8 +49,37 @@ public class ProveedorController {
 
     // GUARDAR
     @PostMapping("/guardar")
-    public String guardarProveedor(@ModelAttribute Proveedor proveedor) {
+    public String guardarProveedor(@ModelAttribute Proveedor proveedor,
+                                   RedirectAttributes redirectAttributes) {
+
+        boolean esNuevo = (proveedor.getId() == null);
+
+        if (proveedor.getNit().isEmpty() ||
+                proveedor.getNombreProveedor().isEmpty() ||
+                proveedor.getDireccion().isEmpty() ||
+                proveedor.getTelefono().isEmpty() ||
+                proveedor.getCiudad().isEmpty()) {
+
+            redirectAttributes.addFlashAttribute("error",
+                    "Faltan datos del proveedor");
+
+            if (esNuevo) {
+                redirectAttributes.addFlashAttribute("error",
+                        "Faltan datos del proveedor");
+                return "redirect:/proveedores/nuevo";
+            } else {
+                redirectAttributes.addFlashAttribute("error",
+                    "Datos faltantes");
+                return "redirect:/proveedores/editar/" + proveedor.getId();
+            }
+        }
+
         proveedorRepository.save(proveedor);
+
+        redirectAttributes.addFlashAttribute("mensaje",
+                esNuevo ? "Proveedor Creado" :
+                        "Datos del Proveedor Actualizados");
+
         return "redirect:/proveedores";
     }
 
@@ -60,8 +93,20 @@ public class ProveedorController {
 
     // ELIMINAR
     @GetMapping("/eliminar/{id}")
-    public String eliminarProveedor(@PathVariable Long id) {
-        proveedorRepository.deleteById(id);
+    public String eliminarProveedor(@PathVariable Long id,
+                                    RedirectAttributes redirectAttributes) {
+
+        if(proveedorRepository.existsById(id)){
+            proveedorRepository.deleteById(id);
+
+            redirectAttributes.addFlashAttribute("mensaje",
+                    "Datos del Proveedor Borrados");
+
+        }else{
+            redirectAttributes.addFlashAttribute("error",
+                    "Proveedor Inexistente");
+        }
+
         return "redirect:/proveedores";
     }
 }

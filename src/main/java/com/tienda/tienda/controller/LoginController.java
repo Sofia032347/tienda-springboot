@@ -36,7 +36,7 @@ public class LoginController {
         if (user.isPresent()) {
             return "redirect:/usuarios";
         } else {
-            model.addAttribute("error", "Usuario o contraseña incorrectos");
+            model.addAttribute("error", "Usuario o contraseña errados, intente de nuevo");
             return "login";
         }
     }

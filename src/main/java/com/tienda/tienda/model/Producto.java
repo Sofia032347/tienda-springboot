@@ -7,23 +7,41 @@ import jakarta.persistence.*;
 public class Producto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "codigo_producto")
+    private Long codigoProducto;
 
-    private String nombre;
-    private Double precio;
-    private Integer stock;
+    @Column(name = "nombre_producto", nullable = false, length = 50)
+    private String nombreProducto;
+
+    @Column(name = "nitproveedor", nullable = false)
+    private Long nitProveedor;
+
+    @Column(name = "precio_compra", nullable = false)
+    private Double precioCompra;
+
+    @Column(name = "ivacompra", nullable = false)
+    private Double ivaCompra;
+
+    @Column(name = "precio_venta", nullable = false)
+    private Double precioVenta;
 
     public Producto() {}
 
-    public Long getId() { return id; }
+    public Long getCodigoProducto() { return codigoProducto; }
+    public void setCodigoProducto(Long codigoProducto) { this.codigoProducto = codigoProducto; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getNombreProducto() { return nombreProducto; }
+    public void setNombreProducto(String nombreProducto) { this.nombreProducto = nombreProducto; }
 
-    public Double getPrecio() { return precio; }
-    public void setPrecio(Double precio) { this.precio = precio; }
+    public Long getNitProveedor() { return nitProveedor; }
+    public void setNitProveedor(Long nitProveedor) { this.nitProveedor = nitProveedor; }
 
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
+    public Double getPrecioCompra() { return precioCompra; }
+    public void setPrecioCompra(Double precioCompra) { this.precioCompra = precioCompra; }
+
+    public Double getIvaCompra() { return ivaCompra; }
+    public void setIvaCompra(Double ivaCompra) { this.ivaCompra = ivaCompra; }
+
+    public Double getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(Double precioVenta) { this.precioVenta = precioVenta; }
 }

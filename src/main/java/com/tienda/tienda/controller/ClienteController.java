@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class ClienteController {
             listaClientes = clienteRepository
                     .findByNombreCompletoContainingIgnoreCaseOrCedulaContainingIgnoreCase(
                             buscar, buscar);
+            if(listaClientes.isEmpty()){
+                model.addAttribute("error","Cliente Inexistente");
+            }
         } else {
             listaClientes = clienteRepository.findAll();
         }
@@ -45,8 +49,31 @@ public class ClienteController {
 
     // GUARDAR (crear y actualizar)
     @PostMapping("/guardar")
-    public String guardarCliente(@ModelAttribute Cliente cliente) {
+    public String guardarCliente(@ModelAttribute Cliente cliente,
+                                 RedirectAttributes redirectAttributes) {
+
+        boolean esNuevo = (cliente.getId() == null);
+
+        if (cliente.getCedula().isEmpty() ||
+                cliente.getNombreCompleto().isEmpty() ||
+                cliente.getDireccion().isEmpty() ||
+                cliente.getTelefono().isEmpty() ||
+                cliente.getCorreoElectronico().isEmpty()) {
+
+            if (esNuevo) {
+                redirectAttributes.addFlashAttribute("error", "Faltan datos del cliente");
+                return "redirect:/clientes/nuevo";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Datos faltantes");
+                return "redirect:/clientes/editar/" + cliente.getId();
+            }
+        }
+
         clienteRepository.save(cliente);
+
+        redirectAttributes.addFlashAttribute("mensaje",
+                esNuevo ? "Cliente Creado" : "Datos del Cliente Actualizados");
+
         return "redirect:/clientes";
     }
 
@@ -60,8 +87,18 @@ public class ClienteController {
 
     // ELIMINAR
     @GetMapping("/eliminar/{id}")
-    public String eliminarCliente(@PathVariable Long id) {
-        clienteRepository.deleteById(id);
+    public String eliminarCliente(@PathVariable Long id,
+                                  RedirectAttributes redirectAttributes) {
+
+        if(clienteRepository.existsById(id)){
+            clienteRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("mensaje",
+                    "Datos del Cliente Borrados");
+        } else {
+            redirectAttributes.addFlashAttribute("error",
+                    "Cliente Inexistente");
+        }
+
         return "redirect:/clientes";
     }
 }
