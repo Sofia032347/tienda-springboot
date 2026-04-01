@@ -1,13 +1,7 @@
 package com.tienda.tienda.service;
 
-import com.tienda.tienda.model.Cliente;
-import com.tienda.tienda.model.DetalleVenta;
-import com.tienda.tienda.model.Producto;
-import com.tienda.tienda.model.Venta;
-import com.tienda.tienda.repository.ClienteRepository;
-import com.tienda.tienda.repository.DetalleVentaRepository;
-import com.tienda.tienda.repository.ProductoRepository;
-import com.tienda.tienda.repository.VentaRepository;
+import com.tienda.tienda.model.*;
+import com.tienda.tienda.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +22,16 @@ public class VentaService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    // 🔥 Registrar venta (Sprint 4 completo)
     public String registrarVenta(String cedulaCliente, List<DetalleVenta> detalles) {
 
+        // Validar cliente
         Cliente cliente = clienteRepository.findByCedula(cedulaCliente);
         if (cliente == null) {
             return "Cliente no existe";
         }
 
+        // Máx 3 productos
         if (detalles.size() > 3) {
             return "Máximo 3 productos";
         }
@@ -44,6 +41,7 @@ public class VentaService {
         for (DetalleVenta d : detalles) {
 
             Producto producto = productoRepository.findByCodigoProducto(d.getCodigoProducto());
+
             if (producto == null) {
                 return "Producto no existe";
             }
@@ -53,8 +51,9 @@ public class VentaService {
             }
 
             double totalProducto = d.getCantidad() * producto.getPrecioVenta();
-            d.setTotalProducto(totalProducto);
+
             d.setValorUnitario(producto.getPrecioVenta());
+            d.setTotalProducto(totalProducto);
 
             totalVenta += totalProducto;
         }
@@ -73,12 +72,19 @@ public class VentaService {
 
         ventaRepository.save(venta);
 
-        // Guardar detalle
         for (DetalleVenta d : detalles) {
             d.setCodigoVenta(consecutivo);
             detalleRepository.save(d);
         }
 
         return "Venta registrada correctamente";
+    }
+
+    public List<Venta> listarVentas() {
+        return ventaRepository.findAll();
+    }
+
+    public List<DetalleVenta> obtenerDetalle(Long codigoVenta) {
+        return detalleRepository.findByCodigoVenta(codigoVenta);
     }
 }
