@@ -1,0 +1,7 @@
+package com.tienda.tienda.repository;
+
+import com.tienda.tienda.model.Venta;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface VentaRepository extends JpaRepository<Venta, Long> {
+}

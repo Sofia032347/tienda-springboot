@@ -9,4 +9,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     List<Cliente> findByNombreCompletoContainingIgnoreCaseOrCedulaContainingIgnoreCase(
             String nombre, String cedula);
+
+    Cliente findByCedula(String cedula);
 }

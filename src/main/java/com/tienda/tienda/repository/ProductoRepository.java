@@ -10,4 +10,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     List<Producto> findByNombreProductoContainingIgnoreCase(String nombre);
 
     boolean existsByNitProveedor(Long nitProveedor);
+
+    Producto findByCodigoProducto(Long codigoProducto);
 }
