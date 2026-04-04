@@ -1,15 +1,12 @@
 package com.tienda.tienda.controller;
 
-import com.tienda.tienda.model.DetalleVenta;
 import com.tienda.tienda.model.Venta;
-import com.tienda.tienda.service.VentaService;
+import com.tienda.tienda.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -17,83 +14,48 @@ import java.util.List;
 public class VentaController {
 
     @Autowired
-    private VentaService ventaService;
+    private VentaRepository ventaRepository;
 
-    // 📋 LISTAR
+    // 🔹 LISTAR VENTAS
     @GetMapping
     public String listarVentas(Model model) {
-        List<Venta> listarVentas = ventaService.listarVentas();
 
-        model.addAttribute("listarVentas", listarVentas);
+        List<Venta> listaVentas = ventaRepository.findAll();
+
+        model.addAttribute("listaVentas", listaVentas); // 🔴 IMPORTANTE
+
         return "ventas";
     }
 
-    // 🟢 FORMULARIO
+    // 🔹 FORMULARIO NUEVA VENTA
     @GetMapping("/nuevo")
-    public String mostrarFormulario() {
+    public String nuevaVenta(Model model) {
+
+        model.addAttribute("venta", new Venta());
+
         return "formVenta";
     }
 
-    // 💾 GUARDAR
+    // 🔹 GUARDAR VENTA
     @PostMapping("/guardar")
-    public String guardarVenta(
+    public String guardarVenta(@ModelAttribute Venta venta) {
 
-            @RequestParam String cedulaCliente,
+        // 🔥 Cálculo automático
+        double iva = venta.getTotalVenta() * 0.19;
+        venta.setTotalIva(iva);
+        venta.setTotalConIva(venta.getTotalVenta() + iva);
 
-            @RequestParam(required = false) Long codigoProducto1,
-            @RequestParam(required = false) Integer cantidad1,
+        ventaRepository.save(venta);
 
-            @RequestParam(required = false) Long codigoProducto2,
-            @RequestParam(required = false) Integer cantidad2,
-
-            @RequestParam(required = false) Long codigoProducto3,
-            @RequestParam(required = false) Integer cantidad3,
-
-            RedirectAttributes redirectAttributes
-    ) {
-
-        List<DetalleVenta> detalles = new ArrayList<>();
-
-        if (codigoProducto1 != null && cantidad1 != null) {
-            DetalleVenta d1 = new DetalleVenta();
-            d1.setCodigoProducto(codigoProducto1);
-            d1.setCantidad(cantidad1);
-            detalles.add(d1);
-        }
-
-        if (codigoProducto2 != null && cantidad2 != null) {
-            DetalleVenta d2 = new DetalleVenta();
-            d2.setCodigoProducto(codigoProducto2);
-            d2.setCantidad(cantidad2);
-            detalles.add(d2);
-        }
-
-        if (codigoProducto3 != null && cantidad3 != null) {
-            DetalleVenta d3 = new DetalleVenta();
-            d3.setCodigoProducto(codigoProducto3);
-            d3.setCantidad(cantidad3);
-            detalles.add(d3);
-        }
-
-        if (detalles.isEmpty()) {
-            redirectAttributes.addFlashAttribute("mensaje", "Debe agregar al menos un producto");
-            return "redirect:/ventas/nuevo";
-        }
-
-        String resultado = ventaService.registrarVenta(cedulaCliente, detalles);
-
-        redirectAttributes.addFlashAttribute("mensaje", resultado);
-
-        return "redirect:/ventas/nuevo";
+        return "redirect:/ventas";
     }
 
-    // 🔍 VER DETALLE
-    @GetMapping("/detalle/{codigo}")
-    public String verDetalle(@PathVariable Long codigo, Model model) {
+    // 🔹 ELIMINAR
+    @GetMapping("/eliminar/{id}")
+    public String eliminarVenta(@PathVariable Long id) {
 
-        model.addAttribute("detalles", ventaService.obtenerDetalle(codigo));
-        model.addAttribute("codigoVenta", codigo);
+        ventaRepository.deleteById(id);
 
-        return "detalleVenta";
+        return "redirect:/ventas";
     }
 }

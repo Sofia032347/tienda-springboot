@@ -1,20 +1,40 @@
 package com.tienda.tienda.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "venta")
 public class Venta {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "codigo_venta")
     private Long codigoVenta;
 
+    @Column(name = "cedula_cliente", nullable = false)
     private String cedulaCliente;
+
+    @Column(name = "cedula_usuario", nullable = false)
     private String cedulaUsuario;
 
-    private double totalVenta;
-    private double totalIva;
-    private double totalConIva;
+    @Column(name = "total_venta", nullable = false)
+    private Double totalVenta;
+
+    @Column(name = "total_iva", nullable = false)
+    private Double totalIva;
+
+    @Column(name = "total_con_iva", nullable = false)
+    private Double totalConIva;
+
+    public Venta() {}
+
+    public Long getCodigoVenta() {
+        return codigoVenta;
+    }
+
+    public void setCodigoVenta(Long codigoVenta) {
+        this.codigoVenta = codigoVenta;
+    }
 
     public String getCedulaCliente() {
         return cedulaCliente;
@@ -32,35 +52,27 @@ public class Venta {
         this.cedulaUsuario = cedulaUsuario;
     }
 
-    public Long getCodigoVenta() {
-        return codigoVenta;
-    }
-
-    public void setCodigoVenta(Long codigoVenta) {
-        this.codigoVenta = codigoVenta;
-    }
-
-    public double getTotalConIva() {
-        return totalConIva;
-    }
-
-    public void setTotalConIva(double totalConIva) {
-        this.totalConIva = totalConIva;
-    }
-
-    public double getTotalIva() {
-        return totalIva;
-    }
-
-    public void setTotalIva(double totalIva) {
-        this.totalIva = totalIva;
-    }
-
-    public double getTotalVenta() {
+    public Double getTotalVenta() {
         return totalVenta;
     }
 
-    public void setTotalVenta(double totalVenta) {
+    public void setTotalVenta(Double totalVenta) {
         this.totalVenta = totalVenta;
+    }
+
+    public Double getTotalIva() {
+        return totalIva;
+    }
+
+    public void setTotalIva(Double totalIva) {
+        this.totalIva = totalIva;
+    }
+
+    public Double getTotalConIva() {
+        return totalConIva;
+    }
+
+    public void setTotalConIva(Double totalConIva) {
+        this.totalConIva = totalConIva;
     }
 }
