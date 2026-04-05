@@ -7,35 +7,228 @@
 
 <body class="bg-light">
 
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/ventas">Sistema Tienda</a>
+    </div>
+</nav>
+
 <div class="container mt-4">
 
-    <div class="card shadow">
-        <div class="card-header bg-success text-white">
-            <h5>Nueva Venta</h5>
-        </div>
+    <!-- BOTÓN VOLVER -->
+    <a href="/ventas" class="btn btn-secondary mb-3">
+        ← Volver
+    </a>
 
+    <div class="card shadow">
         <div class="card-body">
 
-            <form th:action="@{/ventas/guardar}" th:object="${venta}" method="post">
+            <h5 class="mb-4 text-center">Registrar Venta</h5>
 
-                <div class="mb-3">
-                    <label>Cédula Cliente</label>
-                    <input type="text" th:field="*{cedulaCliente}" class="form-control" required>
+            <!-- ========================= -->
+            <!-- 🔹 CONSULTA CLIENTE -->
+            <!-- ========================= -->
+            <form method="get" th:action="@{/ventas/nuevo}">
+
+                <div class="row mb-3">
+
+                    <div class="col-md-3">
+                        <label>Cédula</label>
+                        <input type="text" name="cedula"
+                               th:value="${param.cedula}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-secondary">
+                            Consultar
+                        </button>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label>Cliente</label>
+                        <input type="text" class="form-control"
+                               th:value="${cliente != null ? cliente.nombreCompleto : ''}"
+                               readonly>
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label>Cédula Usuario</label>
-                    <input type="text" th:field="*{cedulaUsuario}" class="form-control" required>
+                <!-- MENSAJES -->
+                <div th:if="${mensajeCliente}" class="alert alert-success">
+                    <span th:text="${mensajeCliente}"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label>Total Venta</label>
-                    <input type="number" step="0.01" th:field="*{totalVenta}" class="form-control" required>
+                <div th:if="${errorCliente}" class="alert alert-danger">
+                    <span th:text="${errorCliente}"></span>
                 </div>
 
-                <button class="btn btn-success">Guardar</button>
-                <a href="/ventas" class="btn btn-secondary">Cancelar</a>
+                <!-- ========================= -->
+                <!-- 🔹 PRODUCTOS -->
+                <!-- ========================= -->
 
+                <table class="table table-bordered text-center">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Código</th>
+                        <th></th>
+                        <th>Nombre Producto</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <!-- 🔹 PRODUCTO 1 -->
+                    <tr>
+                        <td>
+                            <input type="number" name="codigoProducto1"
+                                   th:value="${param.codigoProducto1}"
+                                   class="form-control">
+                        </td>
+
+                        <td>
+                            <button class="btn btn-secondary btn-sm">Consultar</button>
+                        </td>
+
+                        <td>
+                            <input type="text" class="form-control"
+                                   th:value="${producto1 != null ? producto1.nombreProducto : ''}"
+                                   readonly>
+                        </td>
+
+                        <td>
+                            <input type="number" name="cantidad1"
+                                   min="0"
+                                   th:value="${cantidad1 != null ? cantidad1 : (producto1 != null ? 1 : 0)}"
+                                   class="form-control"
+                                   onchange="this.form.submit()">
+                        </td>
+
+                        <td>
+                            <input type="number" class="form-control"
+                                   th:value="${total1 != null ? total1 : 0}"
+                                   readonly>
+                        </td>
+                    </tr>
+
+                    <!-- 🔹 PRODUCTO 2 -->
+                    <tr>
+                        <td>
+                            <input type="number" name="codigoProducto2"
+                                   th:value="${param.codigoProducto2}"
+                                   class="form-control">
+                        </td>
+
+                        <td>
+                            <button class="btn btn-secondary btn-sm">Consultar</button>
+                        </td>
+
+                        <td>
+                            <input type="text" class="form-control"
+                                   th:value="${producto2 != null ? producto2.nombreProducto : ''}"
+                                   readonly>
+                        </td>
+
+                        <td>
+                            <input type="number" name="cantidad2"
+                                   min="0"
+                                   th:value="${cantidad2 != null ? cantidad2 : (producto2 != null ? 1 : 0)}"
+                                   class="form-control"
+                                   onchange="this.form.submit()">
+                        </td>
+
+                        <td>
+                            <input type="number" class="form-control"
+                                   th:value="${total2 != null ? total2 : 0}"
+                                   readonly>
+                        </td>
+                    </tr>
+
+                    <!-- 🔹 PRODUCTO 3 -->
+                    <tr>
+                        <td>
+                            <input type="number" name="codigoProducto3"
+                                   th:value="${param.codigoProducto3}"
+                                   class="form-control">
+                        </td>
+
+                        <td>
+                            <button class="btn btn-secondary btn-sm">Consultar</button>
+                        </td>
+
+                        <td>
+                            <input type="text" class="form-control"
+                                   th:value="${producto3 != null ? producto3.nombreProducto : ''}"
+                                   readonly>
+                        </td>
+
+                        <td>
+                            <input type="number" name="cantidad3"
+                                   min="0"
+                                   th:value="${cantidad3 != null ? cantidad3 : (producto3 != null ? 1 : 0)}"
+                                   class="form-control"
+                                   onchange="this.form.submit()">
+                        </td>
+
+                        <td>
+                            <input type="number" class="form-control"
+                                   th:value="${total3 != null ? total3 : 0}"
+                                   readonly>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <!-- ========================= -->
+                <!-- 🔥 TOTALES -->
+                <!-- ========================= -->
+                <div class="row">
+
+                    <div class="col-md-4 offset-md-8">
+
+                        <div class="mb-2">
+                            <label>Total Venta</label>
+                            <input type="number" class="form-control"
+                                   th:value="${totalVenta}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Total IVA</label>
+                            <input type="number" class="form-control"
+                                   th:value="${totalIVA}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Total con IVA</label>
+                            <input type="number" class="form-control"
+                                   th:value="${totalConIva}"
+                                   readonly>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <!-- ========================= -->
+            <!-- 🔹 GUARDAR -->
+            <!-- ========================= -->
+            <form method="post" th:action="@{/ventas/guardar}">
+                <input type="hidden" name="cedulaCliente" th:value="${param.cedula}">
+                <input type="hidden" name="totalVenta" th:value="${totalVenta}">
+
+                <div class="text-center mt-3">
+                    <button class="btn btn-success">
+                        Confirmar Venta
+                    </button>
+                </div>
             </form>
 
         </div>
