@@ -101,7 +101,6 @@
 
                         <td>
                             <input type="number" name="cantidad1"
-                                   min="0"
                                    th:value="${cantidad1 != null ? cantidad1 : (producto1 != null ? 1 : 0)}"
                                    class="form-control"
                                    onchange="this.form.submit()">
@@ -109,7 +108,7 @@
 
                         <td>
                             <input type="number" class="form-control"
-                                   th:value="${total1 != null ? total1 : 0}"
+                                   th:value="${#numbers.formatDecimal(total1, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </td>
                     </tr>
@@ -142,8 +141,9 @@
 
                         <td>
                             <input type="number" class="form-control"
-                                   th:value="${total2 != null ? total2 : 0}"
+                                   th:value="${#numbers.formatDecimal(total2, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
+
                         </td>
                     </tr>
 
@@ -175,7 +175,7 @@
 
                         <td>
                             <input type="number" class="form-control"
-                                   th:value="${total3 != null ? total3 : 0}"
+                                   th:value="${#numbers.formatDecimal(total3, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </td>
                     </tr>
@@ -193,21 +193,21 @@
                         <div class="mb-2">
                             <label>Total Venta</label>
                             <input type="number" class="form-control"
-                                   th:value="${totalVenta}"
+                                   th:value="${#numbers.formatDecimal(totalVenta, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
 
                         <div class="mb-2">
                             <label>Total IVA</label>
                             <input type="number" class="form-control"
-                                   th:value="${totalIVA}"
+                                   th:value="${#numbers.formatDecimal(totalIVA, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
 
                         <div class="mb-2">
                             <label>Total con IVA</label>
                             <input type="number" class="form-control"
-                                   th:value="${totalConIva}"
+                                   th:value="${#numbers.formatDecimal(totalConIVA, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
 
@@ -221,14 +221,20 @@
             <!-- 🔹 GUARDAR -->
             <!-- ========================= -->
             <form method="post" th:action="@{/ventas/guardar}">
-                <input type="hidden" name="cedulaCliente" th:value="${param.cedula}">
-                <input type="hidden" name="totalVenta" th:value="${totalVenta}">
 
-                <div class="text-center mt-3">
-                    <button class="btn btn-success">
-                        Confirmar Venta
-                    </button>
-                </div>
+                <input type="hidden" name="cedula" th:value="${param.cedula}">
+
+                <input type="hidden" name="codigoProducto1" th:value="${param.codigoProducto1}">
+                <input type="hidden" name="cantidad1" th:value="${cantidad1}">
+
+                <input type="hidden" name="codigoProducto2" th:value="${param.codigoProducto2}">
+                <input type="hidden" name="cantidad2" th:value="${cantidad2}">
+
+                <input type="hidden" name="codigoProducto3" th:value="${param.codigoProducto3}">
+                <input type="hidden" name="cantidad3" th:value="${cantidad3}">
+
+                <button class="btn btn-success">Confirmar</button>
+
             </form>
 
         </div>

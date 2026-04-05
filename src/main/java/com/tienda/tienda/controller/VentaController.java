@@ -143,12 +143,64 @@ public class VentaController {
 
     // 🔹 GUARDAR VENTA
     @PostMapping("/guardar")
-    public String guardarVenta(@ModelAttribute Venta venta) {
+    public String guardarVenta(
 
-        // 🔥 Recalcular por seguridad
-        double iva = venta.getTotalVenta() * 0.19;
-        venta.setTotalIva(iva);
-        venta.setTotalConIva(venta.getTotalVenta() + iva);
+            @RequestParam String cedula,
+
+            @RequestParam(required = false) Long codigoProducto1,
+            @RequestParam(required = false) Integer cantidad1,
+
+            @RequestParam(required = false) Long codigoProducto2,
+            @RequestParam(required = false) Integer cantidad2,
+
+            @RequestParam(required = false) Long codigoProducto3,
+            @RequestParam(required = false) Integer cantidad3
+    ) {
+
+        Cliente cliente = clienteRepository.findByCedula(cedula).orElse(null);
+
+        if (cliente == null) {
+            return "redirect:/ventas/nuevo?errorCliente=1";
+        }
+
+        double total1 = 0;
+        double total2 = 0;
+        double total3 = 0;
+
+        if (codigoProducto1 != null && cantidad1 != null && cantidad1 > 0) {
+            Producto p1 = productoRepository.findByCodigoProducto(codigoProducto1).orElse(null);
+            if (p1 != null) {
+                total1 = cantidad1 * p1.getPrecioVenta();
+            }
+        }
+
+        if (codigoProducto2 != null && cantidad2 != null && cantidad2 > 0) {
+            Producto p2 = productoRepository.findByCodigoProducto(codigoProducto2).orElse(null);
+            if (p2 != null) {
+                total2 = cantidad2 * p2.getPrecioVenta();
+            }
+        }
+
+        if (codigoProducto3 != null && cantidad3 != null && cantidad3 > 0) {
+            Producto p3 = productoRepository.findByCodigoProducto(codigoProducto3).orElse(null);
+            if (p3 != null) {
+                total3 = cantidad3 * p3.getPrecioVenta();
+            }
+        }
+
+        double totalVenta = total1 + total2 + total3;
+        double totalIVA = totalVenta * 0.19;
+        double totalConIVA = totalVenta + totalIVA;
+
+        Venta venta = new Venta();
+        venta.setCedulaCliente(cedula);
+
+        // 🔥 ESTA ES LA LÍNEA QUE TE FALTABA
+        venta.setCedulaUsuario("admin");
+
+        venta.setTotalVenta(totalVenta);
+        venta.setTotalIva(totalIVA);
+        venta.setTotalConIva(totalConIVA);
 
         ventaRepository.save(venta);
 
