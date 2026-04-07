@@ -10,6 +10,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByUsername(String username);
     Optional<Usuario> findByUsernameAndPassword(String username, String password);
+    Optional<Usuario> findByCedula(String cedula);
 
     List<Usuario> findByNombreCompletoContainingIgnoreCaseOrUsernameContainingIgnoreCaseOrCedulaContainingIgnoreCase(
             String nombre, String username, String cedula);

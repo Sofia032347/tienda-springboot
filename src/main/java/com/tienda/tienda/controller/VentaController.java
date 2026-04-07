@@ -2,10 +2,13 @@ package com.tienda.tienda.controller;
 
 import com.tienda.tienda.model.Cliente;
 import com.tienda.tienda.model.Producto;
+import com.tienda.tienda.model.Usuario;
 import com.tienda.tienda.model.Venta;
 import com.tienda.tienda.repository.ClienteRepository;
 import com.tienda.tienda.repository.ProductoRepository;
+import com.tienda.tienda.repository.UsuarioRepository;
 import com.tienda.tienda.repository.VentaRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,17 +29,36 @@ public class VentaController {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // 🔹 LISTAR VENTAS
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    // LISTAR VENTAS
     @GetMapping
     public String listarVentas(Model model) {
 
         List<Venta> listaVentas = ventaRepository.findAll();
+
+        for (Venta v : listaVentas) {
+
+            // Muestra nombre USUARIO
+            Usuario user = usuarioRepository.findByCedula(v.getCedulaUsuario()).orElse(null);
+            if (user != null) {
+                v.setNombreUsuario(user.getNombreCompleto());
+            }
+
+            // Muestra nombre CLIENTE
+            Cliente cliente = clienteRepository.findByCedula(v.getCedulaCliente()).orElse(null);
+            if (cliente != null) {
+                v.setNombreCliente(cliente.getNombreCompleto());
+            }
+        }
+
         model.addAttribute("listaVentas", listaVentas);
 
         return "ventas";
     }
 
-    // 🔹 FORMULARIO NUEVA VENTA
+    // NUEVA VENTA
     @GetMapping("/nuevo")
     public String nuevaVenta(
 
@@ -53,9 +75,7 @@ public class VentaController {
 
             Model model) {
 
-        // =========================
-        // 🔹 CLIENTE
-        // =========================
+        // CLIENTE
         if (cedula != null) {
             Cliente cliente = clienteRepository.findByCedula(cedula).orElse(null);
 
@@ -67,9 +87,7 @@ public class VentaController {
             }
         }
 
-        // =========================
-        // 🔹 PRODUCTO 1
-        // =========================
+        // PRODUCTO 1
         double total1 = 0;
         if (codigoProducto1 != null) {
             Producto producto1 = productoRepository.findByCodigoProducto(codigoProducto1).orElse(null);
@@ -87,9 +105,7 @@ public class VentaController {
             }
         }
 
-        // =========================
-        // 🔹 PRODUCTO 2
-        // =========================
+        // PRODUCTO 2
         double total2 = 0;
         if (codigoProducto2 != null) {
             Producto producto2 = productoRepository.findByCodigoProducto(codigoProducto2).orElse(null);
@@ -107,9 +123,7 @@ public class VentaController {
             }
         }
 
-        // =========================
-        // 🔹 PRODUCTO 3
-        // =========================
+        // PRODUCTO 3
         double total3 = 0;
         if (codigoProducto3 != null) {
             Producto producto3 = productoRepository.findByCodigoProducto(codigoProducto3).orElse(null);
@@ -127,9 +141,7 @@ public class VentaController {
             }
         }
 
-        // =========================
-        // 🔥 TOTALES GENERALES
-        // =========================
+        // TOTALES
         double totalVenta = total1 + total2 + total3;
         double totalIVA = totalVenta * 0.19;
         double totalConIVA = totalVenta + totalIVA;
@@ -141,7 +153,7 @@ public class VentaController {
         return "formVenta";
     }
 
-    // 🔹 GUARDAR VENTA
+    // GUARDAR VENTA
     @PostMapping("/guardar")
     public String guardarVenta(
 
@@ -154,8 +166,17 @@ public class VentaController {
             @RequestParam(required = false) Integer cantidad2,
 
             @RequestParam(required = false) Long codigoProducto3,
-            @RequestParam(required = false) Integer cantidad3
+            @RequestParam(required = false) Integer cantidad3,
+
+            HttpSession session
     ) {
+
+        // OBTENER USUARIO LOGUEADO
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+
+        if (usuario == null) {
+            return "redirect:/login";
+        }
 
         Cliente cliente = clienteRepository.findByCedula(cedula).orElse(null);
 
@@ -166,6 +187,22 @@ public class VentaController {
         double total1 = 0;
         double total2 = 0;
         double total3 = 0;
+
+        // VALIDACIÓN DE CANTIDAD (sin perder datos)
+        if ((cantidad1 != null && cantidad1 <= 0) ||
+                (cantidad2 != null && cantidad2 <= 0) ||
+                (cantidad3 != null && cantidad3 <= 0)) {
+
+            return "redirect:/ventas/nuevo"
+                    + "?cedula=" + cedula
+                    + "&codigoProducto1=" + (codigoProducto1 != null ? codigoProducto1 : "")
+                    + "&cantidad1=" + (cantidad1 != null ? cantidad1 : "")
+                    + "&codigoProducto2=" + (codigoProducto2 != null ? codigoProducto2 : "")
+                    + "&cantidad2=" + (cantidad2 != null ? cantidad2 : "")
+                    + "&codigoProducto3=" + (codigoProducto3 != null ? codigoProducto3 : "")
+                    + "&cantidad3=" + (cantidad3 != null ? cantidad3 : "")
+                    + "&errorCantidad=La cantidad no puede ser menor o igual a 0";
+        }
 
         if (codigoProducto1 != null && cantidad1 != null && cantidad1 > 0) {
             Producto p1 = productoRepository.findByCodigoProducto(codigoProducto1).orElse(null);
@@ -195,8 +232,7 @@ public class VentaController {
         Venta venta = new Venta();
         venta.setCedulaCliente(cedula);
 
-        // 🔥 ESTA ES LA LÍNEA QUE TE FALTABA
-        venta.setCedulaUsuario("admin");
+        venta.setCedulaUsuario(usuario.getCedula());
 
         venta.setTotalVenta(totalVenta);
         venta.setTotalIva(totalIVA);
@@ -207,7 +243,7 @@ public class VentaController {
         return "redirect:/ventas";
     }
 
-    // 🔹 ELIMINAR
+    // ELIMINAR
     @GetMapping("/eliminar/{id}")
     public String eliminarVenta(@PathVariable Long id) {
 

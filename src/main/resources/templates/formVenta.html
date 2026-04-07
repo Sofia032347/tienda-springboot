@@ -16,19 +16,21 @@
 
 <div class="container mt-4">
 
-    <!-- BOTÓN VOLVER -->
     <a href="/ventas" class="btn btn-secondary mb-3">
         ← Volver
     </a>
 
     <div class="card shadow">
+
+        <div th:if="${errorCantidad}" class="alert alert-danger">
+            <span th:text="${errorCantidad}"></span>
+        </div>
+
         <div class="card-body">
 
             <h5 class="mb-4 text-center">Registrar Venta</h5>
 
-            <!-- ========================= -->
-            <!-- 🔹 CONSULTA CLIENTE -->
-            <!-- ========================= -->
+            <!-- CONSULTA CLIENTE -->
             <form method="get" th:action="@{/ventas/nuevo}">
 
                 <div class="row mb-3">
@@ -36,7 +38,7 @@
                     <div class="col-md-3">
                         <label>Cédula</label>
                         <input type="text" name="cedula"
-                               th:value="${param.cedula}"
+                               th:value="${cedula != null ? cedula : param.cedula}"
                                class="form-control">
                     </div>
 
@@ -55,7 +57,6 @@
 
                 </div>
 
-                <!-- MENSAJES -->
                 <div th:if="${mensajeCliente}" class="alert alert-success">
                     <span th:text="${mensajeCliente}"></span>
                 </div>
@@ -64,9 +65,7 @@
                     <span th:text="${errorCliente}"></span>
                 </div>
 
-                <!-- ========================= -->
-                <!-- 🔹 PRODUCTOS -->
-                <!-- ========================= -->
+                <!-- PRODUCTOS -->
 
                 <table class="table table-bordered text-center">
                     <thead class="table-dark">
@@ -81,11 +80,11 @@
 
                     <tbody>
 
-                    <!-- 🔹 PRODUCTO 1 -->
+                    <!-- PRODUCTO 1 -->
                     <tr>
                         <td>
                             <input type="number" name="codigoProducto1"
-                                   th:value="${param.codigoProducto1}"
+                                   th:value="${codigoProducto1 != null ? codigoProducto1 : param.codigoProducto1}"
                                    class="form-control">
                         </td>
 
@@ -107,17 +106,33 @@
                         </td>
 
                         <td>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(total1, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </td>
                     </tr>
 
-                    <!-- 🔹 PRODUCTO 2 -->
+                    <tr th:if="${mensajeProducto1}">
+                        <td colspan="5">
+                            <div class="alert alert-success mt-2 mb-0 text-center">
+                                <span th:text="${mensajeProducto1}"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${errorProducto1}">
+                        <td colspan="5">
+                            <div class="alert alert-danger mt-2 mb-0 text-center">
+                                <span th:text="${errorProducto1}"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- PRODUCTO 2 -->
                     <tr>
                         <td>
                             <input type="number" name="codigoProducto2"
-                                   th:value="${param.codigoProducto2}"
+                                   th:value="${codigoProducto2 != null ? codigoProducto2 : param.codigoProducto2}"
                                    class="form-control">
                         </td>
 
@@ -140,18 +155,33 @@
                         </td>
 
                         <td>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(total2, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
-
                         </td>
                     </tr>
 
-                    <!-- 🔹 PRODUCTO 3 -->
+                    <tr th:if="${mensajeProducto2}">
+                        <td colspan="5">
+                            <div class="alert alert-success mt-2 mb-0 text-center">
+                                <span th:text="${mensajeProducto2}"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${errorProducto2}">
+                        <td colspan="5">
+                            <div class="alert alert-danger mt-2 mb-0 text-center">
+                                <span th:text="${errorProducto2}"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- PRODUCTO 3 -->
                     <tr>
                         <td>
                             <input type="number" name="codigoProducto3"
-                                   th:value="${param.codigoProducto3}"
+                                   th:value="${codigoProducto3 != null ? codigoProducto3 : param.codigoProducto3}"
                                    class="form-control">
                         </td>
 
@@ -174,39 +204,53 @@
                         </td>
 
                         <td>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(total3, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${mensajeProducto3}">
+                        <td colspan="5">
+                            <div class="alert alert-success mt-2 mb-0 text-center">
+                                <span th:text="${mensajeProducto3}"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${errorProducto3}">
+                        <td colspan="5">
+                            <div class="alert alert-danger mt-2 mb-0 text-center">
+                                <span th:text="${errorProducto3}"></span>
+                            </div>
                         </td>
                     </tr>
 
                     </tbody>
                 </table>
 
-                <!-- ========================= -->
-                <!-- 🔥 TOTALES -->
-                <!-- ========================= -->
+                <!-- TOTALES -->
                 <div class="row">
 
                     <div class="col-md-4 offset-md-8">
 
                         <div class="mb-2">
                             <label>Total Venta</label>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(totalVenta, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
 
                         <div class="mb-2">
                             <label>Total IVA</label>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(totalIVA, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
 
                         <div class="mb-2">
                             <label>Total con IVA</label>
-                            <input type="number" class="form-control"
+                            <input type="text" class="form-control"
                                    th:value="${#numbers.formatDecimal(totalConIVA, 0, 'POINT', 0, 'COMMA')}"
                                    readonly>
                         </div>
@@ -217,21 +261,26 @@
 
             </form>
 
-            <!-- ========================= -->
-            <!-- 🔹 GUARDAR -->
-            <!-- ========================= -->
+            <!-- GUARDAR -->
             <form method="post" th:action="@{/ventas/guardar}">
 
-                <input type="hidden" name="cedula" th:value="${param.cedula}">
+                <input type="hidden" name="cedula"
+                       th:value="${cedula != null ? cedula : param.cedula}">
 
-                <input type="hidden" name="codigoProducto1" th:value="${param.codigoProducto1}">
-                <input type="hidden" name="cantidad1" th:value="${cantidad1}">
+                <input type="hidden" name="codigoProducto1"
+                       th:value="${codigoProducto1 != null ? codigoProducto1 : param.codigoProducto1}">
+                <input type="hidden" name="cantidad1"
+                       th:value="${cantidad1}">
 
-                <input type="hidden" name="codigoProducto2" th:value="${param.codigoProducto2}">
-                <input type="hidden" name="cantidad2" th:value="${cantidad2}">
+                <input type="hidden" name="codigoProducto2"
+                       th:value="${codigoProducto2 != null ? codigoProducto2 : param.codigoProducto2}">
+                <input type="hidden" name="cantidad2"
+                       th:value="${cantidad2}">
 
-                <input type="hidden" name="codigoProducto3" th:value="${param.codigoProducto3}">
-                <input type="hidden" name="cantidad3" th:value="${cantidad3}">
+                <input type="hidden" name="codigoProducto3"
+                       th:value="${codigoProducto3 != null ? codigoProducto3 : param.codigoProducto3}">
+                <input type="hidden" name="cantidad3"
+                       th:value="${cantidad3}">
 
                 <button class="btn btn-success">Confirmar</button>
 

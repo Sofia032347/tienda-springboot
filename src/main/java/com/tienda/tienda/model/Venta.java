@@ -26,6 +26,12 @@ public class Venta {
     @Column(name = "total_con_iva", nullable = false)
     private Double totalConIva;
 
+    @Transient
+    private String nombreCliente;
+
+    @Transient
+    private String nombreUsuario;
+
     public Venta() {}
 
     public Long getCodigoVenta() {
@@ -74,5 +80,21 @@ public class Venta {
 
     public void setTotalConIva(Double totalConIva) {
         this.totalConIva = totalConIva;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 }

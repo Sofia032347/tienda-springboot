@@ -40,7 +40,7 @@ public class ProveedorController {
         return "proveedores";
     }
 
-    // FORM NUEVO
+    // NUEVO PROVEEDOR
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevo(Model model) {
         model.addAttribute("proveedor", new Proveedor());

@@ -40,7 +40,7 @@ public class ClienteController {
         return "clientes";
     }
 
-    // FORM NUEVO
+    // NUEVO CLIENTE
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevo(Model model) {
         model.addAttribute("cliente", new Cliente());

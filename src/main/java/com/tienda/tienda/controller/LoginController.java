@@ -2,6 +2,7 @@ package com.tienda.tienda.controller;
 
 import com.tienda.tienda.model.Usuario;
 import com.tienda.tienda.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String validarLogin(@ModelAttribute Usuario usuario, Model model) {
+    public String validarLogin(@ModelAttribute Usuario usuario, Model model, HttpSession session) {
 
         Optional<Usuario> user =
                 repository.findByUsernameAndPassword(
@@ -34,6 +35,7 @@ public class LoginController {
                         usuario.getPassword());
 
         if (user.isPresent()) {
+            session.setAttribute("usuarioLogueado", user.get());
             return "redirect:/usuarios";
         } else {
             model.addAttribute("error", "Usuario o contraseña errados, intente de nuevo");
