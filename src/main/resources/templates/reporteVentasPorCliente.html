@@ -1,26 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Reporte - Total Ventas por Cliente</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/usuarios">Sistema Tienda</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/usuarios">Usuarios</a></li>
-                <li class="nav-item"><a class="nav-link" href="/proveedores">Proveedores</a></li>
-                <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
-                <li class="nav-item"><a class="nav-link" href="/productos">Productos</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ventas">Ventas</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/consutayreportes">Consulta Y Reportes</a></li>
-            </ul>
-            <a href="/login" class="btn btn-outline-light btn-sm">Cerrar Sesión</a>
-        </div>
+        <a class="navbar-brand" href="#">Sistema Tienda</a>
     </div>
 </nav>
 
@@ -28,41 +17,44 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">💰 Total de Ventas por Cliente</h5>
-        <a href="/consutayreportes" class="btn btn-outline-secondary btn-sm">← Volver a Reportes</a>
+        <a href="/reportes" class="btn btn-outline-secondary btn-sm">← Volver a Reportes</a>
     </div>
 
-    <!-- Mensaje si no hay datos -->
-    <div th:if="${mensaje}" class="alert alert-warning">
-        <span th:text="${mensaje}"></span>
+    <div th:if="${reporteVentas == null or #lists.isEmpty(reporteVentas)}" class="alert alert-warning shadow-sm">
+        No se encontraron ventas registradas para generar el reporte.
     </div>
 
-    <div th:if="${filas != null and !#lists.isEmpty(filas)}" class="card shadow">
-        <div class="card-header bg-warning text-dark">
-            <span>Total de clientes con ventas: <strong th:text="${#lists.size(filas)}"></strong></span>
+    <div th:if="${reporteVentas != null and !#lists.isEmpty(reporteVentas)}" class="card shadow">
+        <div class="card-header bg-warning text-dark fw-bold">
+            Listado Consolidado
         </div>
         <div class="card-body p-0">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark text-center">
-                    <tr>
-                        <th>#</th>
-                        <th>Cédula Cliente</th>
-                        <th>Nombre Cliente</th>
-                        <th class="text-end">Total Ventas (con IVA)</th>
-                    </tr>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Cédula</th>
+                    <th>Nombre Completo</th>
+                    <th class="text-end">Ventas Totales (Con IVA)</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="fila, iter : ${filas}">
-                        <td th:text="${iter.count}" class="text-center"></td>
-                        <td th:text="${fila.cedula}"></td>
-                        <td th:text="${fila.nombre}"></td>
-                        <td th:text="${'$ ' + #numbers.formatDecimal(fila.totalVentas, 1, 'COMMA', 2, 'POINT')}" class="text-end fw-semibold"></td>
-                    </tr>
+                <tr th:each="fila, iter : ${reporteVentas}">
+                    <td th:text="${iter.count}" class="text-center"></td>
+                    <td th:text="${fila.cedula}"></td>
+                    <td th:text="${fila.nombre}"></td>
+                    <td class="text-end fw-semibold"
+                        th:text="${'$ ' + #numbers.formatDecimal(fila.total, 1, 'POINT', 2, 'COMMA')}">
+                    </td>
+                </tr>
                 </tbody>
                 <tfoot>
-                    <tr class="table-dark">
-                        <td colspan="3" class="text-end fw-bold">TOTAL GENERAL:</td>
-                        <td th:text="${'$ ' + #numbers.formatDecimal(totalGeneral, 1, 'COMMA', 2, 'POINT')}" class="text-end fw-bold"></td>
-                    </tr>
+                <tr class="table-dark">
+                    <td colspan="3" class="text-end fw-bold">TOTAL GENERAL:</td>
+                    <td class="text-end fw-bold text-warning"
+                        th:text="${'$ ' + #numbers.formatDecimal(totalGeneral, 1, 'POINT', 2, 'COMMA')}">
+                    </td>
+                </tr>
                 </tfoot>
             </table>
         </div>
@@ -70,5 +62,6 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
