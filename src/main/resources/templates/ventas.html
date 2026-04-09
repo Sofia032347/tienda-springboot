@@ -30,7 +30,7 @@
                     <a class="nav-link active" href="/ventas">Ventas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/consutayreportes">Consulta Y Reportes</a>
+                    <a class="nav-link" href="/reportes">Consulta Y Reportes</a>
                 </li>
             </ul>
 
@@ -76,7 +76,7 @@
                     <td class="text-center" th:text="${v.codigoVenta}"></td>
                     <td th:text="${v.cedulaCliente}"></td>
                     <td th:text="${v.nombreCliente}"></td>
-                    <td th:text="${v.cedulaUsuario}"></td>
+                    <td th:text="${v.nombreUsuario}"></td>
 
                     <td class="text-end"
                         th:text="'$ ' + ${#numbers.formatDecimal(v.totalVenta, 0, 'POINT', 0, 'COMMA')}">
