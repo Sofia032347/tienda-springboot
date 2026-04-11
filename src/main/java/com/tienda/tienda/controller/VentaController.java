@@ -1,13 +1,7 @@
 package com.tienda.tienda.controller;
 
-import com.tienda.tienda.model.Cliente;
-import com.tienda.tienda.model.Producto;
-import com.tienda.tienda.model.Usuario;
-import com.tienda.tienda.model.Venta;
-import com.tienda.tienda.repository.ClienteRepository;
-import com.tienda.tienda.repository.ProductoRepository;
-import com.tienda.tienda.repository.UsuarioRepository;
-import com.tienda.tienda.repository.VentaRepository;
+import com.tienda.tienda.model.*;
+import com.tienda.tienda.repository.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +25,9 @@ public class VentaController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private DetalleVentaRepository detalleVentaRepository;
 
     // LISTAR VENTAS
     @GetMapping
@@ -238,7 +235,55 @@ public class VentaController {
         venta.setTotalIva(totalIVA);
         venta.setTotalConIva(totalConIVA);
 
-        ventaRepository.save(venta);
+        Venta ventaGuardada = ventaRepository.save(venta);
+
+        // PRODUCTO 1
+        if (codigoProducto1 != null && cantidad1 != null && cantidad1 > 0) {
+            Producto p1 = productoRepository.findByCodigoProducto(codigoProducto1).orElse(null);
+
+            if (p1 != null) {
+                DetalleVenta d1 = new DetalleVenta();
+                d1.setCodigoVenta(ventaGuardada.getCodigoVenta());
+                d1.setCodigoProducto(codigoProducto1);
+                d1.setCantidad(cantidad1);
+                d1.setValorUnitario(p1.getPrecioVenta());
+                d1.setTotalProducto(cantidad1 * p1.getPrecioVenta());
+
+                detalleVentaRepository.save(d1);
+            }
+        }
+
+        // PRODUCTO 2
+        if (codigoProducto2 != null && cantidad2 != null && cantidad2 > 0) {
+            Producto p2 = productoRepository.findByCodigoProducto(codigoProducto2).orElse(null);
+
+            if (p2 != null) {
+                DetalleVenta d2 = new DetalleVenta();
+                d2.setCodigoVenta(ventaGuardada.getCodigoVenta());
+                d2.setCodigoProducto(codigoProducto2);
+                d2.setCantidad(cantidad2);
+                d2.setValorUnitario(p2.getPrecioVenta());
+                d2.setTotalProducto(cantidad2 * p2.getPrecioVenta());
+
+                detalleVentaRepository.save(d2);
+            }
+        }
+
+        // PRODUCTO 3
+        if (codigoProducto3 != null && cantidad3 != null && cantidad3 > 0) {
+            Producto p3 = productoRepository.findByCodigoProducto(codigoProducto3).orElse(null);
+
+            if (p3 != null) {
+                DetalleVenta d3 = new DetalleVenta();
+                d3.setCodigoVenta(ventaGuardada.getCodigoVenta());
+                d3.setCodigoProducto(codigoProducto3);
+                d3.setCantidad(cantidad3);
+                d3.setValorUnitario(p3.getPrecioVenta());
+                d3.setTotalProducto(cantidad3 * p3.getPrecioVenta());
+
+                detalleVentaRepository.save(d3);
+            }
+        }
 
         return "redirect:/ventas";
     }
@@ -251,4 +296,18 @@ public class VentaController {
 
         return "redirect:/ventas";
     }
+
+    @GetMapping("/detalleventa/{id}")
+    public String verDetalleVenta(@PathVariable Long id, Model model) {
+
+        Venta venta = ventaRepository.findById(id).orElse(null);
+
+        List<DetalleVenta> detalles = detalleVentaRepository.findByCodigoVenta(id);
+
+        model.addAttribute("venta", venta);
+        model.addAttribute("detalles", detalles);
+
+        return "detalleventa";
+    }
+
 }

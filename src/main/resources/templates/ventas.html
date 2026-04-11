@@ -72,26 +72,31 @@
 
                 <tbody>
 
-                <tr th:each="v : ${listaVentas}">
-                    <td class="text-center" th:text="${v.codigoVenta}"></td>
-                    <td th:text="${v.cedulaCliente}"></td>
-                    <td th:text="${v.nombreCliente}"></td>
-                    <td th:text="${v.nombreUsuario}"></td>
+                <tr th:each="venta : ${listaVentas}">
+                    <td class="text-center" th:text="${venta.codigoVenta}"></td>
+                    <td th:text="${venta.cedulaCliente}"></td>
+                    <td th:text="${venta.nombreCliente}"></td>
+                    <td th:text="${venta.nombreUsuario}"></td>
 
                     <td class="text-end"
-                        th:text="'$ ' + ${#numbers.formatDecimal(v.totalVenta, 0, 'POINT', 0, 'COMMA')}">
+                        th:text="'$ ' + ${#numbers.formatDecimal(venta.totalVenta, 0, 'POINT', 0, 'COMMA')}">
                     </td>
 
                     <td class="text-end"
-                        th:text="'$ ' + ${#numbers.formatDecimal(v.totalIva, 0, 'POINT', 0, 'COMMA')}">
+                        th:text="'$ ' + ${#numbers.formatDecimal(venta.totalIva, 0, 'POINT', 0, 'COMMA')}">
                     </td>
 
                     <td class="text-end fw-bold"
-                        th:text="'$ ' + ${#numbers.formatDecimal(v.totalConIva, 0, 'POINT', 0, 'COMMA')}">
+                        th:text="'$ ' + ${#numbers.formatDecimal(venta.totalConIva, 0, 'POINT', 0, 'COMMA')}">
                     </td>
 
                     <td class="text-center">
-                        <a th:href="@{/ventas/eliminar/{id}(id=${v.codigoVenta})}"
+                        <a th:if="${venta != null}" class="btn btn-info btn-sm"
+                           th:href="@{/ventas/detalleventa/{id}(id=${venta.codigoVenta})}">
+                            Ver detalle
+                        </a>
+
+                        <a th:href="@{/ventas/eliminar/{id}(id=${venta.codigoVenta})}"
                            class="btn btn-danger btn-sm"
                            onclick="return confirm('¿Eliminar venta?')">
                             Eliminar

@@ -1,9 +1,6 @@
 package com.tienda.tienda.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class DetalleVenta {
@@ -12,7 +9,10 @@ public class DetalleVenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "codigo_venta")
     private Long codigoVenta;
+
+    @Column(name = "codigo_producto")
     private Long codigoProducto;
 
     private int cantidad;
